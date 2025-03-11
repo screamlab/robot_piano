@@ -49,3 +49,10 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+# IDEs
+.idea/
+.vs/
+.vscode/
+
+__pycache__/
