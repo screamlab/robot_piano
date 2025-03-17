@@ -42,7 +42,7 @@ def generate_launch_description():
 
     # RViz
     rviz_config_file = (
-        get_package_share_directory("mtc_tutorial") + "/launch/mtc.rviz"
+        get_package_share_directory("robot_piano") + "/launch/mtc.rviz"
     )
     rviz_node = Node(
         package="rviz2",
