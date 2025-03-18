@@ -89,7 +89,7 @@ class MoveItPlanner {
         waypoints.push_back(prev_pose_);
         waypoints.push_back(target_pose_);
         double fraction =
-            move_group_interface_->computeCartesianPath(waypoints, eef_step, trajectory);
+            move_group_interface_->computeCartesianPath(waypoints, eef_step, 0.0, trajectory);
         if (fraction == 1.0) {
             move_group_interface_->execute(trajectory);
             prev_pose_ = target_pose_;
