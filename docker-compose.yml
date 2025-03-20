@@ -1,0 +1,44 @@
+# Example command:
+# xhost +
+# ROS_DOMAIN_ID=0 docker compose run --rm cpu
+
+services:
+  moveit:
+    image: registry.screamtrumpet.csie.ncku.edu.tw/pros_images/pros_moveit_image:latest
+    container_name: moveit2_container
+    privileged: true
+    networks:
+      - my_bridge
+    command: /bin/bash
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      # - $HOME/.Xauthority:/root/.Xauthority
+      - $XAUTHORITY:/root/.Xauthority
+      - /dev/shm:/dev/shm
+      - ./../../src:/workspaces/src
+    environment:
+      QT_X11_NO_MITSHM: 1
+      DISPLAY: $DISPLAY
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
+
+  micro_ros_agent:
+    # Do NOT set network_mode: host or you'll encounter
+    # 1. eprosima::fastcdr::exception::NotEnoughMemoryException
+    # 2. std::bad_alloc
+    image: microros/micro-ros-agent:humble
+    container_name: micro_ros_container
+    privileged: true
+    networks:
+      - my_bridge
+    command: serial --dev /dev/ttyUSB0 -v4
+    volumes:
+      - /dev:/dev
+    environment:
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
+
+# This will create a docker bridge network
+# docker network create --driver bridge robot_piano_my_bridge
+# You can see the network by docker network ls
+networks:
+  my_bridge:
+    driver: bridge
