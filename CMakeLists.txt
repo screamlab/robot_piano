@@ -28,7 +28,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(shape_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
-add_executable(ik_calc src/ik_calc.cpp)
+add_executable(ik_calc src/ik_calc.cpp src/moveit_planner.cpp)
 target_include_directories(ik_calc PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
