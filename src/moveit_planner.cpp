@@ -1,12 +1,9 @@
 #include "robot_piano/moveit_planner.hpp"
 
 MoveItPlanner::MoveItPlanner(
-    const rclcpp::Node::SharedPtr &node = rclcpp::Node::make_shared(
-        "right_arm_ik_calc",
-        rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true)),
-    const std::string &planning_group = "right_arm",
-    const geometry_msgs::msg::Pose &init_pose = right_init_pose,
-    const std::vector<moveit_msgs::msg::CollisionObject> &collision_objects = {piano_object})
+    const rclcpp::Node::SharedPtr &node, const std::string &planning_group,
+    const geometry_msgs::msg::Pose &init_pose,
+    const std::vector<moveit_msgs::msg::CollisionObject> &collision_objects)
     : node_(node), init_pose_(init_pose), target_pose_(init_pose_), prev_pose_(init_pose_) {
     move_group_interface_ =
         std::make_shared<moveit::planning_interface::MoveGroupInterface>(node_, planning_group);
@@ -25,7 +22,7 @@ void MoveItPlanner::setTargetPose(const double x_bias, const double y_bias, cons
 
 geometry_msgs::msg::Pose MoveItPlanner::getTargetPose() { return target_pose_; }
 
-bool MoveItPlanner::planToPose(const double velocity = 0.1) {
+bool MoveItPlanner::planToPose(const double velocity) {
     RCLCPP_INFO(node_->get_logger(), "Planning to target pose...");
     move_group_interface_->setPoseTarget(target_pose_);
     move_group_interface_->setMaxVelocityScalingFactor(velocity);
@@ -41,7 +38,7 @@ bool MoveItPlanner::planToPose(const double velocity = 0.1) {
     return success;
 }
 
-bool MoveItPlanner::planCartesianPath(const double velocity = 0.1) {
+bool MoveItPlanner::planCartesianPath(const double velocity) {
     RCLCPP_INFO(node_->get_logger(), "Planning Cartesian path from previous to target pose...");
     move_group_interface_->setMaxVelocityScalingFactor(velocity);
     move_group_interface_->setMaxAccelerationScalingFactor(velocity);
