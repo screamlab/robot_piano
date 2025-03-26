@@ -4,16 +4,16 @@
 #include <std_msgs/msg/header.hpp>
 
 // This is the kinematic result of the left-joint angles
-// [-28, 88, 45, 80, -45, -8] in degrees.
+// [-28, 88, 45, 80, -45, 82] in degrees.
 const auto left_init_pose = []() {
     geometry_msgs::msg::Pose p;
-    p.position.x = 0.3180207479658762;
-    p.position.y = 0.1068236883454219;
-    p.position.z = 1.121059877111907;
-    p.orientation.x = 0.3950582266844113;
-    p.orientation.y = 0.5852159758662753;
-    p.orientation.z = 0.5815513007571326;
-    p.orientation.w = -0.4040412648573641;
+    p.position.x = 0.31887877665212355;
+    p.position.y = 0.10894773731092511;
+    p.position.z = 1.122253189916326;
+    p.orientation.x = 0.13249437284716514;
+    p.orientation.y = -0.1291909894165388;
+    p.orientation.z = -0.690468511102102;
+    p.orientation.w = 0.6992911872702663;
     return p;
 }();
 
