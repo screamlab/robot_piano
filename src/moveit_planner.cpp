@@ -20,6 +20,22 @@ void MoveItPlanner::setTargetPose(const double x_bias, const double y_bias, cons
     target_pose_.position.z += z_bias;
 }
 
+void MoveItPlanner::rotateTargetPoseX(const double angle_rad) {
+    RCLCPP_INFO(node_->get_logger(), "Rotating target pose along the X-axis...");
+    prev_pose_ = target_pose_;
+    // Convert geometry_msgs::msg::Pose to Eigen::Isometry3d using tf2::fromMsg
+    Eigen::Isometry3d eigen_transform;
+    tf2::fromMsg(prev_pose_, eigen_transform);
+
+    Eigen::AngleAxisd rotation_vector(angle_rad, Eigen::Vector3d::UnitX());
+
+    // Apply the rotation to the original transform
+    eigen_transform.rotate(rotation_vector);
+
+    // Convert the Eigen transform back to geometry_msgs::msg::Pose
+    target_pose_ = tf2::toMsg(eigen_transform);
+}
+
 geometry_msgs::msg::Pose MoveItPlanner::getTargetPose() { return target_pose_; }
 
 bool MoveItPlanner::planToPose(const double velocity) {
@@ -42,14 +58,14 @@ bool MoveItPlanner::planCartesianPath(const double velocity) {
     RCLCPP_INFO(node_->get_logger(), "Planning Cartesian path from previous to target pose...");
     move_group_interface_->setMaxVelocityScalingFactor(velocity);
     move_group_interface_->setMaxAccelerationScalingFactor(velocity);
-    double eef_step = 0.01;  // Distance between interpolated points
+    double eef_step = 0.001;  // Distance between interpolated points
     moveit_msgs::msg::RobotTrajectory trajectory;
     std::vector<geometry_msgs::msg::Pose> waypoints;
     waypoints.push_back(prev_pose_);
     waypoints.push_back(target_pose_);
     double fraction =
         move_group_interface_->computeCartesianPath(waypoints, eef_step, 0.0, trajectory);
-    if (fraction == 1.0) {
+    if (fraction >= 0.0) {
         move_group_interface_->execute(trajectory);
         prev_pose_ = target_pose_;
         return true;
