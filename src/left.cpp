@@ -1,6 +1,7 @@
 #include <signal.h>
 #include <unistd.h>
 
+#include "robot_piano/hand_publisher.hpp"
 #include "robot_piano/moveit_planner.hpp"
 #include "robot_piano/utils.hpp"
 #include "trajectory_msgs/msg/joint_trajectory_point.hpp"
@@ -36,17 +37,13 @@ int main(int argc, char *argv[]) {
     // Instantiate the planner for the left arm.
     MoveItPlanner left_planner(left_node, "left_arm", left_init_pose, {piano_object});
 
-    // Create a publisher for JointTrajectoryPoint on the '/left_hand' topic.
-    auto left_hand_pub =
-        left_node->create_publisher<trajectory_msgs::msg::JointTrajectoryPoint>("/left_hand", 10);
-
-    // Prepare the initial JointTrajectoryPoint message.
-    trajectory_msgs::msg::JointTrajectoryPoint init_point;
-    init_point.positions = {deg2rad(180.0), 0.0, 0.0, 0.0, 0.0};
-
-    // Publish the initial angles.
-    left_hand_pub->publish(init_point);
+    auto hand_publisher = std::make_shared<HandPublisher>("/left_hand");
+    hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
     RCLCPP_INFO(left_node->get_logger(), "Published initial left hand joint angles.");
+
+    rclcpp::executors::SingleThreadedExecutor hand_executor;
+    hand_executor.add_node(hand_publisher);
+    std::thread hand_thread([&hand_executor]() { hand_executor.spin(); });
 
     // Register signal handler for SIGUSR1.
     signal(SIGUSR1, signal_handler);
@@ -66,8 +63,8 @@ int main(int argc, char *argv[]) {
     left_planner.setTargetPose(0.0, 0.4, 0.0);
     RCLCHECK(left_planner.planCartesianPath(0.8), "Left");
 
-    init_point.positions[1] = deg2rad(90);
-    left_hand_pub->publish(init_point);
+    // Adjust the hand angles during runtime
+    hand_publisher->setHandAngles({deg2rad(180.0), deg2rad(90.0), 0.0, 0.0, 0.0});
 
     left_planner.rotateTargetPoseX(deg2rad(-10));
     RCLCHECK(left_planner.planCartesianPath(0.3), "Left");
@@ -77,5 +74,9 @@ int main(int argc, char *argv[]) {
 
     // Shutdown the process after finishing all tasks.
     rclcpp::shutdown();
+
+    // Stop the hand publisher executor and join the thread
+    hand_executor.cancel();
+    hand_thread.join();
     return 0;
 }
