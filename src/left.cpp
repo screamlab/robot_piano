@@ -1,38 +1,59 @@
-#include <signal.h>
-#include <unistd.h>
+#include <condition_variable>
+#include <mutex>
+#include <std_srvs/srv/trigger.hpp>
+#include <thread>
 
 #include "robot_piano/hand_publisher.hpp"
 #include "robot_piano/moveit_planner.hpp"
 #include "robot_piano/utils.hpp"
 #include "trajectory_msgs/msg/joint_trajectory_point.hpp"
 
-// Global flag to indicate signal reception.
-volatile sig_atomic_t signal_received = 0;
-
-// Signal handler to set the flag.
-void signal_handler(int signum) {
-    if (signum == SIGINT) {
-        RCLCPP_WARN(rclcpp::get_logger("left_arm_ik_calc"), "Received SIGINT signal.");
-        rclcpp::shutdown();
-        exit(signum);
-    } else if (signum == SIGUSR1) {
-        signal_received = 1;
+class SyncService : public rclcpp::Node {
+   public:
+    SyncService() : Node("sync_service"), start_triggered_(false) {
+        // Create a service server for "start_sync"
+        service_ = this->create_service<std_srvs::srv::Trigger>(
+            "start_sync", std::bind(&SyncService::start_callback, this, std::placeholders::_1,
+                                    std::placeholders::_2));
     }
-}
+
+    // Blocks until the "start_sync" service call is received.
+    void wait_for_start() {
+        std::unique_lock<std::mutex> lock(mutex_);
+        cond_var_.wait(lock, [this]() { return start_triggered_; });
+    }
+
+   private:
+    void start_callback(const std::shared_ptr<std_srvs::srv::Trigger::Request> /*request*/,
+                        std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            start_triggered_ = true;
+        }
+        cond_var_.notify_one();
+        response->success = true;
+        response->message = "Start triggered.";
+        RCLCPP_INFO(this->get_logger(), "Received start_sync service call. Starting work...");
+    }
+
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr service_;
+    bool start_triggered_;
+    std::mutex mutex_;
+    std::condition_variable cond_var_;
+};
 
 int main(int argc, char *argv[]) {
     rclcpp::init(argc, argv);
+
+    auto sync_node = std::make_shared<SyncService>();
+
+    // Use a separate thread for spinning so that service callbacks are processed.
+    std::thread sync_thread([sync_node]() { rclcpp::spin(sync_node); });
 
     // Create a node for the left arm.
     auto left_node = rclcpp::Node::make_shared(
         "left_arm_ik_calc",
         rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
-
-    // Retrieve the current process ID
-    pid_t pid = getpid();
-
-    // Log the process ID using rclcpp's logging mechanism
-    RCLCPP_WARN(left_node->get_logger(), "Node is running with PID: %d", pid);
 
     // Instantiate the planner for the left arm.
     MoveItPlanner left_planner(left_node, "left_arm", left_init_pose, {piano_object});
@@ -45,32 +66,29 @@ int main(int argc, char *argv[]) {
     hand_executor.add_node(hand_publisher);
     std::thread hand_thread([&hand_executor]() { hand_executor.spin(); });
 
-    // Register signal handler for SIGUSR1.
-    signal(SIGUSR1, signal_handler);
-    signal(SIGINT, signal_handler);
-
     // Perform the first planning phase.
-    RCLCHECK(left_planner.planToPose(0.8), "Left");
+    RCLCHECK(left_planner.planToPose(0.1), "Left");
 
-    // // Wait for the signal.
-    // RCLCPP_WARN(left_node->get_logger(),
-    //             "Waiting for SIGUSR1 to proceed with the second planning phase...");
-    // while (!signal_received) {
-    //     sleep(1);  // Sleep to reduce CPU usage while waiting.
-    // }
+    // Block here until the service callback sets the flag.
+    RCLCPP_WARN(sync_node->get_logger(), "Waiting for start_sync service call...");
+    sync_node->wait_for_start();
+
+    RCLCPP_WARN(sync_node->get_logger(), "Sync triggered, proceeding with main work...");
 
     // Proceed with the main planning phase.
     left_planner.setTargetPose(0.0, 0.4, 0.0);
-    RCLCHECK(left_planner.planCartesianPath(0.8), "Left");
+    RCLCHECK(left_planner.planCartesianPath(0.1), "Left");
 
     // Adjust the hand angles during runtime
     hand_publisher->setHandAngles({deg2rad(180.0), deg2rad(90.0), 0.0, 0.0, 0.0});
 
     left_planner.rotateTargetPoseX(deg2rad(-10));
-    RCLCHECK(left_planner.planCartesianPath(0.3), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
 
-    // left_planner.setTargetPose(-0.1, 0.0, 0.1);
-    // RCLCHECK(left_planner.planCartesianPath(0.1), "Left");
+    hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
+
+    left_planner.rotateTargetPoseX(deg2rad(10));
+    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
 
     // Shutdown the process after finishing all tasks.
     rclcpp::shutdown();
@@ -78,5 +96,8 @@ int main(int argc, char *argv[]) {
     // Stop the hand publisher executor and join the thread
     hand_executor.cancel();
     hand_thread.join();
+
+    // Stop the sync service thread
+    sync_thread.join();
     return 0;
 }
