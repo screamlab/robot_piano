@@ -10,11 +10,11 @@
 
 class SyncService : public rclcpp::Node {
    public:
-    SyncService() : Node("sync_service"), start_triggered_(false) {
+    SyncService() : Node("left_sync_service"), start_triggered_(false) {
         // Create a service server for "start_sync"
         service_ = this->create_service<std_srvs::srv::Trigger>(
-            "start_sync", std::bind(&SyncService::start_callback, this, std::placeholders::_1,
-                                    std::placeholders::_2));
+            "left_start_sync", std::bind(&SyncService::start_callback, this, std::placeholders::_1,
+                                         std::placeholders::_2));
     }
 
     // Blocks until the "start_sync" service call is received.
