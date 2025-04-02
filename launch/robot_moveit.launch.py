@@ -122,6 +122,13 @@ def generate_launch_description():
         parameters=[sim_time_param],
     )
 
+    micro_ros_preprocess = Node(
+        package="micro_ros_preprocess",
+        executable="merge_topic",
+        name="merge_topic",
+        parameters=[sim_time_param],
+    )
+
     return LaunchDescription(
         [
             rviz_node,
@@ -130,6 +137,7 @@ def generate_launch_description():
             run_move_group_node,
             ros2_control_node,
             moveit_joint_republisher,
+            micro_ros_preprocess,
         ]
         + load_controllers
     )
