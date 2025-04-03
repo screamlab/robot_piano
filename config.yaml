@@ -1,0 +1,6 @@
+name: my_bridge
+from_domain: 1
+to_domain: 0
+topics:
+  right_start_sync:
+    type: std_srvs/srv/Trigger
