@@ -2,9 +2,11 @@
 
 using namespace std::chrono_literals;
 
-HandPublisher::HandPublisher(const std::string &topic_name) : Node("hand_publisher") {
+HandPublisher::HandPublisher(const std::string &topic_name,
+                             const std::vector<double> &init_position)
+    : Node("hand_publisher") {
     hand_pub_ = create_publisher<trajectory_msgs::msg::JointTrajectoryPoint>(topic_name, 10);
-    hand_point_.positions = {3.14, 0.0, 0.0, 0.0, 0.0};
+    hand_point_.positions = init_position;
     timer_ = create_wall_timer(10ms, std::bind(&HandPublisher::timer_callback, this));
 }
 

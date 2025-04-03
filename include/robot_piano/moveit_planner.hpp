@@ -61,10 +61,13 @@ class MoveItPlanner {
     // Plans and executes a Cartesian path from prev_pose_ to target_pose_.
     bool planCartesianPath(const double velocity = 0.1);
 
-   private:
     // Adds a collision-object vector to the planning scene.
     void addCollisionObject(const std::vector<moveit_msgs::msg::CollisionObject> &co);
 
+    // Removes a collision-object vector from the planning scene.
+    void removeCollisionObject(const std::vector<std::string> &object_ids);
+
+   private:
     rclcpp::Node::SharedPtr node_;
     std::shared_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_;
     const geometry_msgs::msg::Pose init_pose_;

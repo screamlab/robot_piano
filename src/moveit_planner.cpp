@@ -58,7 +58,7 @@ bool MoveItPlanner::planCartesianPath(const double velocity) {
     RCLCPP_INFO(node_->get_logger(), "Planning Cartesian path from previous to target pose...");
     move_group_interface_->setMaxVelocityScalingFactor(velocity);
     move_group_interface_->setMaxAccelerationScalingFactor(velocity);
-    double eef_step = 0.001;  // Distance between interpolated points
+    double eef_step = 0.01;  // Distance between interpolated points
     moveit_msgs::msg::RobotTrajectory trajectory;
     std::vector<geometry_msgs::msg::Pose> waypoints;
     waypoints.push_back(prev_pose_);
@@ -66,6 +66,7 @@ bool MoveItPlanner::planCartesianPath(const double velocity) {
     double fraction =
         move_group_interface_->computeCartesianPath(waypoints, eef_step, 0.0, trajectory);
     if (fraction >= 0.0) {
+        RCLCPP_INFO(node_->get_logger(), "fraction: %.2f", fraction);
         move_group_interface_->execute(trajectory);
         prev_pose_ = target_pose_;
         return true;
@@ -87,4 +88,9 @@ void MoveItPlanner::addCollisionObject(const std::vector<moveit_msgs::msg::Colli
 
     moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
     planning_scene_interface.addCollisionObjects(collision_objects);
+}
+
+void MoveItPlanner::removeCollisionObject(const std::vector<std::string> &object_ids) {
+    moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+    planning_scene_interface.removeCollisionObjects(object_ids);
 }
