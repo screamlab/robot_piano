@@ -4,30 +4,30 @@
 #include <std_msgs/msg/header.hpp>
 
 // This is the kinematic result of the left-joint angles
-// [-28, 88, 45, 80, -45, 82] in degrees.
+// [-28, 88, 45, 84, -45, 82] in degrees.
 const auto left_init_pose = []() {
     geometry_msgs::msg::Pose p;
-    p.position.x = 0.31887877665212355;
-    p.position.y = 0.10894773731092511;
-    p.position.z = 1.122253189916326;
-    p.orientation.x = 0.13249437284716514;
-    p.orientation.y = -0.1291909894165388;
-    p.orientation.z = -0.690468511102102;
-    p.orientation.w = 0.6992911872702663;
+    p.position.x = 0.31210279264757873;
+    p.position.y = 0.10673761228487201;
+    p.position.z = 1.1387751632083898;
+    p.orientation.x = 0.13317917261291404;
+    p.orientation.y = -0.16262911859128856;
+    p.orientation.z = -0.6926819903446356;
+    p.orientation.w = 0.6899324155455767;
     return p;
 }();
 
 // This is the kinematic result of the right-joint angles
-// [28, 88, -45, -80, -45, -82] in degrees.
+// [28, 88, -45, -84, -45, -82] in degrees.
 const auto right_init_pose = []() {
     geometry_msgs::msg::Pose p;
-    p.position.x = 0.3178071837760669;
-    p.position.y = -0.10556869093811046;
-    p.position.z = 1.1215113837188624;
-    p.orientation.x = -0.1345047736672149;
-    p.orientation.y = -0.1247301629367219;
-    p.orientation.z = 0.6927253372844873;
-    p.orientation.w = 0.697482945596954;
+    p.position.x = 0.31123710024038204;
+    p.position.y = -0.10892418433260642;
+    p.position.z = 1.1355713114965817;
+    p.orientation.x = -0.13275623094736622;
+    p.orientation.y = -0.15898911456916212;
+    p.orientation.z = 0.6900454979187236;
+    p.orientation.w = 0.6934951012049503;
     return p;
 }();
 
