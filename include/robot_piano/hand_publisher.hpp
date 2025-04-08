@@ -1,7 +1,8 @@
 #pragma once
-#include "rclcpp/rclcpp.hpp"
+#include <rclcpp/rclcpp.hpp>
+#include <trajectory_msgs/msg/joint_trajectory_point.hpp>
+
 #include "robot_piano/utils.hpp"
-#include "trajectory_msgs/msg/joint_trajectory_point.hpp"
 
 class HandPublisher : public rclcpp::Node {
    public:

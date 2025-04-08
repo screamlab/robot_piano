@@ -4,11 +4,11 @@
 #include <mutex>
 #include <std_srvs/srv/trigger.hpp>
 #include <thread>
+#include <trajectory_msgs/msg/joint_trajectory_point.hpp>
 
 #include "robot_piano/hand_publisher.hpp"
 #include "robot_piano/moveit_planner.hpp"
 #include "robot_piano/utils.hpp"
-#include "trajectory_msgs/msg/joint_trajectory_point.hpp"
 
 class SyncService : public rclcpp::Node {
    public:
