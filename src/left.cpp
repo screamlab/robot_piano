@@ -72,7 +72,11 @@ int main(int argc, char *argv[]) {
     std::thread hand_thread([&hand_executor]() { hand_executor.spin(); });
 
     // Perform the first planning phase.
-    left_planner.setTargetPose(left_init_pose);  // Duplicate work, just for the API testing.
+    left_planner.setTargetPose("left_t_pose");
+    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    left_planner.setTargetPose(left_mid_pose);
+    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    left_planner.setTargetPose(left_init_pose);
     RCLCHECK(left_planner.planToPose(0.1), "Left");
 
     /**
@@ -188,6 +192,18 @@ int main(int argc, char *argv[]) {
     left_planner.addCollisionObject({piano_object});
 
     usleep(500 * 1000);  // Sleep for 500ms
+
+    /**
+     * Return to the rest pose.
+     */
+    left_planner.setTargetPose(0.0, 0.0, 0.25);
+    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+
+    left_planner.setTargetPose(left_mid_pose);
+    RCLCHECK(left_planner.planToPose(0.1), "Left");
+
+    left_planner.setTargetPose("left_t_pose");
+    RCLCHECK(left_planner.planToPose(0.1), "Left");
 
     left_planner.setTargetPose("left_rest");
     RCLCHECK(left_planner.planToPose(0.1), "Left");

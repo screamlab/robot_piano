@@ -17,6 +17,20 @@ const auto left_init_pose = []() {
     return p;
 }();
 
+// This is the kinematic result of the left-joint angles
+// [-24, 22, -7, 72, 16, 29] in degrees.
+const auto left_mid_pose = []() {
+    geometry_msgs::msg::Pose p;
+    p.position.x = 0.27184990188146685;
+    p.position.y = 0.6006422048308747;
+    p.position.z = 1.3132380612684487;
+    p.orientation.x = 0.053122085898056615;
+    p.orientation.y = -0.047791463201040406;
+    p.orientation.z = -0.6255856928897661;
+    p.orientation.w = 0.7768761554370004;
+    return p;
+}();
+
 // This is the kinematic result of the right-joint angles
 // [28, 88, -45, -84, -45, -82] in degrees.
 const auto right_init_pose = []() {
