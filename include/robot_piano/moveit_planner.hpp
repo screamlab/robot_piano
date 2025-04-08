@@ -47,6 +47,12 @@ class MoveItPlanner {
     // The current target_pose_ is saved to prev_pose_ before updating.
     void setTargetPose(const double x_bias, const double y_bias, const double z_bias);
 
+    // Sets a new target pose from the predefined pose.
+    void setTargetPose(const std::string &pose_name);
+
+    // Sets a new target pose to the given pose.
+    void setTargetPose(const geometry_msgs::msg::Pose &pose);
+
     // Rotate the current target pose along the x-axis.
     // The current target_pose_ is saved to prev_pose_ before updating.
     void rotateTargetPoseX(const double angle);
