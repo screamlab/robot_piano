@@ -4,3 +4,7 @@ to_domain: 0
 topics:
   right_start_sync:
     type: std_srvs/srv/Trigger
+  right_arm:
+    type: trajectory_msgs/msg/joint_trajectory_point
+  right_hand:
+    type: trajectory_msgs/msg/joint_trajectory_point

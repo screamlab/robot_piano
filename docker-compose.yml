@@ -3,13 +3,13 @@
 # ROS_DOMAIN_ID=0 docker compose run --rm cpu
 
 services:
-  moveit:
+  moveit_left:
     image: registry.screamtrumpet.csie.ncku.edu.tw/pros_images/pros_moveit_image:latest
-    container_name: moveit2_container
+    container_name: moveit2_container_left
     privileged: true
     networks:
       - my_bridge
-    command: /bin/bash
+    command: bash -c "source /opt/ros/humble/setup.bash && source /root/ws_moveit/install/setup.bash && colcon build --mixin release && source ./install/setup.bash && ros2 launch robot_piano robot_moveit.launch.py"
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       # - $HOME/.Xauthority:/root/.Xauthority
@@ -19,22 +19,71 @@ services:
     environment:
       QT_X11_NO_MITSHM: 1
       DISPLAY: $DISPLAY
-      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
+      ROS_DOMAIN_ID: 0
+  
+  moveit_right:
+    image: registry.screamtrumpet.csie.ncku.edu.tw/pros_images/pros_moveit_image:latest
+    container_name: moveit2_container_right
+    privileged: true
+    networks:
+      - my_bridge
+    command: bash -c "source /opt/ros/humble/setup.bash && source /root/ws_moveit/install/setup.bash && colcon build --mixin release && source ./install/setup.bash && ros2 launch robot_piano robot_moveit.launch.py"
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      # - $HOME/.Xauthority:/root/.Xauthority
+      - $XAUTHORITY:/root/.Xauthority
+      - /dev/shm:/dev/shm
+      - ./../../src:/workspaces/src
+    environment:
+      QT_X11_NO_MITSHM: 1
+      DISPLAY: $DISPLAY
+      ROS_DOMAIN_ID: 1
+  
+  domain_bridge:
+    image: registry.screamtrumpet.csie.ncku.edu.tw/pros_images/pros_base_image:latest
+    container_name: domain_bridge_container
+    privileged: true
+    networks:
+      - my_bridge
+    command: ros2 run domain_bridge domain_bridge /workspaces/config.yaml
+    volumes:
+      - /dev:/dev
+      - ./config.yaml:/workspaces/config.yaml
+    environment:
+      ROS_DOMAIN_ID: 0
+    depends_on:
+      - moveit_left
+      - moveit_right
 
-  micro_ros_agent:
+  micro_ros_agent_1:
     # Do NOT set network_mode: host or you'll encounter
     # 1. eprosima::fastcdr::exception::NotEnoughMemoryException
     # 2. std::bad_alloc
     image: microros/micro-ros-agent:humble
-    container_name: micro_ros_container
+    container_name: micro_ros_container_1
     privileged: true
     networks:
       - my_bridge
-    command: serial --dev /dev/ttyUSB0 -v4
+    command: serial --dev /dev/ttyUSB0 --baudrate 921600 -v4
     volumes:
       - /dev:/dev
     environment:
-      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
+      ROS_DOMAIN_ID: 0
+  
+  micro_ros_agent_2:
+    # Do NOT set network_mode: host or you'll encounter
+    # 1. eprosima::fastcdr::exception::NotEnoughMemoryException
+    # 2. std::bad_alloc
+    image: microros/micro-ros-agent:humble
+    container_name: micro_ros_container_2
+    privileged: true
+    networks:
+      - my_bridge
+    command: serial --dev /dev/ttyUSB1 --baudrate 921600 -v4
+    volumes:
+      - /dev:/dev
+    environment:
+      ROS_DOMAIN_ID: 0
 
 # This will create a docker bridge network
 # docker network create --driver bridge robot_piano_my_bridge
