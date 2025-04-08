@@ -98,8 +98,12 @@ bool MoveItPlanner::planCartesianPath(const double velocity) {
     std::vector<geometry_msgs::msg::Pose> waypoints;
     waypoints.push_back(prev_pose_);
     waypoints.push_back(target_pose_);
+#ifdef ROS_DISTRO_JAZZY
+    double fraction = move_group_interface_->computeCartesianPath(waypoints, eef_step, trajectory);
+#else
     double fraction =
         move_group_interface_->computeCartesianPath(waypoints, eef_step, 0.0, trajectory);
+#endif
     if (fraction >= 0.0) {
         RCLCPP_INFO(node_->get_logger(), "fraction: %.2f", fraction);
         move_group_interface_->execute(trajectory);
