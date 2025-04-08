@@ -45,6 +45,20 @@ const auto right_init_pose = []() {
     return p;
 }();
 
+// This is the kinematic result of the right-joint angles
+// [24, 22, 7, -72, 16, -29] in degrees.
+const auto right_mid_pose = []() {
+    geometry_msgs::msg::Pose p;
+    p.position.x = 0.2703383820752677;
+    p.position.y = -0.6027466604025816;
+    p.position.z = 1.3156217005609305;
+    p.orientation.x = -0.05319390153987607;
+    p.orientation.y = -0.03782401935424339;
+    p.orientation.z = 0.6254149314193604;
+    p.orientation.w = 0.7775576608564618;
+    return p;
+}();
+
 const auto piano_object = []() {
     moveit_msgs::msg::CollisionObject collision_object;
     collision_object.header.frame_id = "";

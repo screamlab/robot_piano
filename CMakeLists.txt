@@ -45,14 +45,19 @@ find_package(std_msgs REQUIRED)
 
 add_executable(ik_calc src/ik_calc.cpp src/moveit_planner.cpp)
 add_executable(left src/left.cpp src/moveit_planner.cpp src/hand_publisher.cpp)
+add_executable(right src/right.cpp src/moveit_planner.cpp src/hand_publisher.cpp)
 target_include_directories(ik_calc PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 target_include_directories(left PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+target_include_directories(right PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 target_compile_features(ik_calc PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 target_compile_features(left PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(right PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
   ik_calc
   "moveit_ros_planning_interface"
@@ -75,11 +80,22 @@ ament_target_dependencies(
   "std_msgs"
   "trajectory_msgs"
 )
+ament_target_dependencies(
+  right
+  "moveit_ros_planning_interface"
+  "moveit_task_constructor_core"
+  "rclcpp"
+  "moveit_msgs"
+  "geometry_msgs"
+  "shape_msgs"
+  "std_msgs"
+  "trajectory_msgs"
+)
 
-install(TARGETS ik_calc
-  DESTINATION lib/${PROJECT_NAME})
-
-install(TARGETS left
+install(TARGETS
+  ik_calc
+  left
+  right
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch
