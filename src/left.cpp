@@ -73,17 +73,17 @@ int main(int argc, char *argv[]) {
 
     // Perform the first planning phase.
     left_planner.setTargetPose("left_t_pose");
-    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    RCLCHECK(left_planner.planToPose(0.1), left_node, "Left");
     left_planner.setTargetPose(left_mid_pose);
-    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    RCLCHECK(left_planner.planToPose(0.1), left_node, "Left");
     left_planner.setTargetPose([&]() {
         auto pose = left_init_pose;
         pose.position.y += 0.2;
         return pose;
     }());
-    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    RCLCHECK(left_planner.planToPose(0.1), left_node, "Left");
     left_planner.setTargetPose(left_init_pose);
-    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    RCLCHECK(left_planner.planToPose(0.1), left_node, "Left");
 
     /**
      * Block here until the service callback sets the flag.
@@ -99,102 +99,102 @@ int main(int argc, char *argv[]) {
     /* Move to the first note. */
     // left_planner.setTargetPose(0.0, 0.18, 0.015);
     left_planner.setTargetPose(0.0, 0.18, 0.0);
-    RCLCHECK(left_planner.planCartesianPath(0.1), "Left");
+    RCLCHECK(left_planner.planCartesianPath(0.1), left_node, "Left");
     left_planner.removeCollisionObject({piano_object.id});
 
     // Press the key.
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, deg2rad(90.0)});
     left_planner.setTargetPose(0.0, 0.0, -0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     usleep(500 * 1000);  // Sleep for 500ms
 
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, 0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     // Press the key.
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, deg2rad(90.0), 0.0});
     left_planner.setTargetPose(0.0, 0.0, -0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     usleep(500 * 1000);  // Sleep for 500ms
 
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, 0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     // Press the key.
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, deg2rad(90.0), 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, -0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     usleep(500 * 1000);  // Sleep for 500ms
 
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, 0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     // Press the key.
     hand_publisher->setHandAngles({deg2rad(180.0), deg2rad(90.0), 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, -0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     usleep(500 * 1000);  // Sleep for 500ms
 
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, 0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     /* Move to the second note. */
     left_planner.addCollisionObject({piano_object});
     left_planner.setTargetPose(0.0, -0.095, -0.015);
-    RCLCHECK(left_planner.planCartesianPath(0.1), "Left");
+    RCLCHECK(left_planner.planCartesianPath(0.1), left_node, "Left");
     left_planner.removeCollisionObject({piano_object.id});
 
     // Press the key.
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, deg2rad(90.0)});
     left_planner.setTargetPose(0.0, 0.0, -0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     usleep(500 * 1000);  // Sleep for 500ms
 
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, 0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     // Press the key.
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, deg2rad(90.0), 0.0});
     left_planner.setTargetPose(0.0, 0.0, -0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     usleep(500 * 1000);  // Sleep for 500ms
 
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, 0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     // Press the key.
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, deg2rad(90.0), 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, -0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     usleep(500 * 1000);  // Sleep for 500ms
 
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, 0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     // Press the key.
     hand_publisher->setHandAngles({deg2rad(180.0), deg2rad(90.0), 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, -0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
 
     usleep(500 * 1000);  // Sleep for 500ms
 
     hand_publisher->setHandAngles({deg2rad(180.0), 0.0, 0.0, 0.0, 0.0});
     left_planner.setTargetPose(0.0, 0.0, 0.05);
-    RCLCHECK(left_planner.planCartesianPath(1.0), "Left");
+    RCLCHECK(left_planner.planCartesianPath(1.0), left_node, "Left");
     left_planner.addCollisionObject({piano_object});
 
     usleep(500 * 1000);  // Sleep for 500ms
@@ -203,16 +203,16 @@ int main(int argc, char *argv[]) {
      * Return to the rest pose.
      */
     left_planner.setTargetPose(0.0, 0.4, 0.25);
-    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    RCLCHECK(left_planner.planToPose(0.1), left_node, "Left");
 
     left_planner.setTargetPose(left_mid_pose);
-    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    RCLCHECK(left_planner.planToPose(0.1), left_node, "Left");
 
     left_planner.setTargetPose("left_t_pose");
-    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    RCLCHECK(left_planner.planToPose(0.1), left_node, "Left");
 
     left_planner.setTargetPose("left_rest");
-    RCLCHECK(left_planner.planToPose(0.1), "Left");
+    RCLCHECK(left_planner.planToPose(0.1), left_node, "Left");
 
     // Shutdown the process after finishing all tasks.
     rclcpp::shutdown();
