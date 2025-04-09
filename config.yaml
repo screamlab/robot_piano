@@ -5,6 +5,6 @@ topics:
   right_start_sync:
     type: std_srvs/srv/Trigger
   right_arm:
-    type: trajectory_msgs/msg/joint_trajectory_point
+    type: trajectory_msgs/msg/JointTrajectoryPoint
   right_hand:
-    type: trajectory_msgs/msg/joint_trajectory_point
+    type: trajectory_msgs/msg/JointTrajectoryPoint
