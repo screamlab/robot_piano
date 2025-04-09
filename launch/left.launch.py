@@ -42,7 +42,7 @@ def generate_launch_description():
 
     # RViz
     rviz_config_file = (
-        get_package_share_directory("robot_piano") + "/launch/mtc_right.rviz"
+        get_package_share_directory("robot_piano") + "/launch/mtc_left.rviz"
     )
     rviz_node = Node(
         package="rviz2",
@@ -101,9 +101,7 @@ def generate_launch_description():
     load_controllers = []
     for controller in [
         "left_arm_controller",
-        "right_arm_controller",
         "left_hand_controller",
-        "right_hand_controller",
         "joint_state_broadcaster",
     ]:
         load_controllers += [

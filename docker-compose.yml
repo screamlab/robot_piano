@@ -9,7 +9,7 @@ services:
     privileged: true
     networks:
       - my_bridge
-    command: bash -c "source /opt/ros/humble/setup.bash && source /root/ws_moveit/install/setup.bash && colcon build --mixin release && source ./install/setup.bash && ros2 launch robot_piano robot_moveit.launch.py"
+    command: bash -c "source /opt/ros/humble/setup.bash && source /root/ws_moveit/install/setup.bash && colcon build --mixin release && source ./install/setup.bash && ros2 launch robot_piano left.launch.py"
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       # - $HOME/.Xauthority:/root/.Xauthority
@@ -27,7 +27,7 @@ services:
     privileged: true
     networks:
       - my_bridge
-    command: bash -c "source /opt/ros/humble/setup.bash && source /root/ws_moveit/install/setup.bash && colcon build --mixin release && source ./install/setup.bash && ros2 launch robot_piano robot_moveit.launch.py"
+    command: bash -c "source /opt/ros/humble/setup.bash && source /root/ws_moveit/install/setup.bash && colcon build --mixin release && source ./install/setup.bash && ros2 launch robot_piano right.launch.py"
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       # - $HOME/.Xauthority:/root/.Xauthority
