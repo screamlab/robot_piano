@@ -59,12 +59,12 @@ services:
     # Do NOT set network_mode: host or you'll encounter
     # 1. eprosima::fastcdr::exception::NotEnoughMemoryException
     # 2. std::bad_alloc
-    image: microros/micro-ros-agent:humble
+    image: registry.screamtrumpet.csie.ncku.edu.tw/pros_images/pros_micro_ros_agent_image:latest
     container_name: micro_ros_container_1
     privileged: true
     networks:
       - my_bridge
-    command: serial --dev /dev/ttyUSB0 --baudrate 921600 -v4
+    command: ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0 --baudrate 921600 -v4
     volumes:
       - /dev:/dev
     environment:
@@ -74,12 +74,12 @@ services:
     # Do NOT set network_mode: host or you'll encounter
     # 1. eprosima::fastcdr::exception::NotEnoughMemoryException
     # 2. std::bad_alloc
-    image: microros/micro-ros-agent:humble
+    image: registry.screamtrumpet.csie.ncku.edu.tw/pros_images/pros_micro_ros_agent_image:latest
     container_name: micro_ros_container_2
     privileged: true
     networks:
       - my_bridge
-    command: serial --dev /dev/ttyUSB1 --baudrate 921600 -v4
+    command: ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB1 --baudrate 921600 -v4
     volumes:
       - /dev:/dev
     environment:
