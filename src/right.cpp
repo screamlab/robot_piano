@@ -89,10 +89,10 @@ int main(int argc, char *argv[]) {
     /**
      * Block here until the service callback sets the flag.
      */
-    // RCLCPP_WARN(sync_node->get_logger(), "Waiting for start_sync service call...");
-    // sync_node->wait_for_start();
+    RCLCPP_WARN(sync_node->get_logger(), "Waiting for start_sync service call...");
+    sync_node->wait_for_start();
 
-    // RCLCPP_WARN(sync_node->get_logger(), "Sync triggered, proceeding with main work...");
+    RCLCPP_WARN(sync_node->get_logger(), "Sync triggered, proceeding with main work...");
 
     /**
      * Proceed with the main planning phase.
