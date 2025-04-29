@@ -1,0 +1,14 @@
+name: my_bridge
+from_domain: 1
+to_domain: 0
+topics:
+  right_arm:
+    type: trajectory_msgs/msg/JointTrajectoryPoint
+  right_hand:
+    type: trajectory_msgs/msg/JointTrajectoryPoint
+
+# Reference: https://github.com/ros2/domain_bridge/blob/main/doc/design.md
+# services:
+#   right_start_sync:
+#     type: std_srvs/srv/Trigger
+#     bidirectional: true
